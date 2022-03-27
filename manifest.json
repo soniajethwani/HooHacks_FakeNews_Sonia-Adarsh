@@ -1,0 +1,6 @@
+{
+	"name": "FakeNewsDetector",
+	"description": "Fake News Detector Google Chrome Extension",
+	"version": "1.0",
+	"manifest_version": 2
+}
