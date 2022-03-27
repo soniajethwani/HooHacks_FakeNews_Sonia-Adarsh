@@ -46,9 +46,6 @@ for index in range(0, len(ListofText)):
     header.append('articles' + str(index))
 for index in range(0, len(ListofText)):
     with open('articles.csv', 'w') as outfile:
-        # with open('articles.csv', mode = 'r') as inp:
-        #     reader = csv.reader(inp)
-        #     dict_from_csv = {rows[0]:rows[1] for rows in reader}
         # print(dict_from_csv)
         mywriter = csv.writer(outfile)
         mywriter.writerow([header[index]])
@@ -63,10 +60,12 @@ for index in range(0, len(ListofText)):
         # remove the punctuations
         modifiedText = [re.sub(r"\.\?", "", word) for word in modifiedText]
         modifiedText = [re.sub(r"\+\.(1-9)", "", word) for word in modifiedText]
+        # keeps track of words that are repeated in each article
         vectorizer = CountVectorizer(stop_words = 'english')
         vectorizer.fit(modifiedText)
         vector = vectorizer.transform(modifiedText)
         df = pd.read_csv('articles.csv', sep = 'delimiter')
+        # Trains and tests model
         X_train, X_test, Y_train, Y_test = train_test_split(df[header[index]].values, df[header[index]].values, test_size = 0.3, random_state=1)
         tfidf_vectorizer = TfidfVectorizer(stop_words='english', max_df = 0.9)
         tfidf_train = tfidf_vectorizer.fit_transform(X_train)
@@ -74,5 +73,6 @@ for index in range(0, len(ListofText)):
         pac = PassiveAggressiveClassifier(max_iter = 50)
         pac.fit(tfidf_train, Y_train)
         Y_pred = pac.predict(tfidf_test)
+        # Extracts score for accuracy of article
         score = 1 - accuracy_score(Y_test, Y_pred)
         print("Accuracy: " + str(score))
